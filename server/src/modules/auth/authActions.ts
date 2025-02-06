@@ -49,9 +49,11 @@ const login: RequestHandler = async (req, res, next) => {
 
       // #cookies2 : Le token n'est plus nécessaire dans la réponse en JSON,
       // étant donné qu'il est passé par le cookie
-      res.json({
-        user: userWithoutHashedPassword,
-      });
+      res
+        .json({
+          user: userWithoutHashedPassword,
+        })
+        .status(200);
     } else {
       res.sendStatus(422);
     }
