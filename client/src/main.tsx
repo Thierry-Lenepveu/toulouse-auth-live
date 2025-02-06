@@ -29,6 +29,7 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register />,
       },
+      // #cookies : Ajout d'une route /items, à protéger par la suite
       {
         path: "/items",
         element: <Items />,

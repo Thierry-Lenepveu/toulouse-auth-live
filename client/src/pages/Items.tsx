@@ -1,3 +1,6 @@
+// #cookies : Création d'un composant Items qui requête le back
+// afin d'obtenir les items. Cette route sera protégée plus tard
+// via les cookies.
 import { useEffect, useState } from "react";
 
 interface Data {
