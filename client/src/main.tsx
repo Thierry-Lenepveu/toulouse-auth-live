@@ -8,7 +8,6 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App";
 
 import Home from "./pages/Home";
-import Items from "./pages/Items";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -28,11 +27,6 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <Register />,
-      },
-      // #cookies : Ajout d'une route /items, à protéger par la suite
-      {
-        path: "/items",
-        element: <Items />,
       },
     ],
   },
