@@ -76,21 +76,23 @@ function Home() {
   return (
     <>
       {auth != null && (
-        <form onSubmit={handleSubmit}>
-          <div>
-            {/* Champ pour le title */}
-            <label htmlFor="title">title</label>{" "}
-            <input ref={titleRef} type="text" id="title" />
-          </div>
-          {/* Bouton de soumission du formulaire */}
-          <button type="submit">Send</button>
-        </form>
+        <>
+          <form onSubmit={handleSubmit}>
+            <div>
+              {/* Champ pour le title */}
+              <label htmlFor="title">title</label>{" "}
+              <input ref={titleRef} type="text" id="title" />
+            </div>
+            {/* Bouton de soumission du formulaire */}
+            <button type="submit">Send</button>
+          </form>
+          <ul>
+            {items.map(({ id, title }) => (
+              <li key={id}>{title}</li>
+            ))}
+          </ul>
+        </>
       )}
-      <ul>
-        {items.map(({ id, title }) => (
-          <li key={id}>{title}</li>
-        ))}
-      </ul>
     </>
   );
 }

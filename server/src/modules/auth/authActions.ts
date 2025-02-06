@@ -40,8 +40,16 @@ const login: RequestHandler = async (req, res, next) => {
         },
       );
 
+      // #cookies2 : Configuration du cookie httpOnly qu'on enverra en réponse
+      // de la requête
+      res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "strict",
+      });
+
+      // #cookies2 : Le token n'est plus nécessaire dans la réponse en JSON,
+      // étant donné qu'il est passé par le cookie
       res.json({
-        token,
         user: userWithoutHashedPassword,
       });
     } else {
@@ -49,6 +57,20 @@ const login: RequestHandler = async (req, res, next) => {
     }
   } catch (err) {
     // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+// #cookies2 : Ajout d'un handler de déconnexion. Le cookie qui
+// porte le nom "token" (et dans lequel le jwt est stocké) est
+// nettoyé, ce qui a pour conséquence de déconnecter l'utilisateur.
+// On renvoie un status 204 ("no content"), ce qui va nous permettre
+// de gérer l'état et la redirection côté front.
+const logout: RequestHandler = async (_, res, next) => {
+  try {
+    res.clearCookie("token");
+    res.sendStatus(204);
+  } catch (err) {
     next(err);
   }
 };
@@ -84,22 +106,38 @@ const hashPassword: RequestHandler = async (req, res, next) => {
 
 const verifyToken: RequestHandler = (req, res, next) => {
   try {
-    // Vérifier la présence de l'en-tête "Authorization" dans la requête
-    const authorizationHeader = req.get("Authorization");
+    // #cookies2 : Le code ci-dessous devient caduque dès lors qu'on utilise
+    // les cookies
+    // ********************************************************************
+    // // Vérifier la présence de l'en-tête "Authorization" dans la requête
+    // const authorizationHeader = req.get("Authorization");
 
-    if (authorizationHeader == null) {
-      throw new Error("Authorization header is missing");
+    // if (authorizationHeader == null) {
+    //   throw new Error("Authorization header is missing");
+    // }
+
+    // // Vérifier que l'en-tête a la forme "Bearer <token>"
+    // const [type, token] = authorizationHeader.split(" ");
+
+    // if (type !== "Bearer") {
+    //   throw new Error("Authorization header has not the 'Bearer' type");
+    // }
+
+    // // Vérifier la validité du token (son authenticité et sa date d'expériation)
+    // // En cas de succès, le payload est extrait et décodé
+    // req.auth = jwt.verify(token, process.env.APP_SECRET as string) as MyPayload;
+    // ********************************************************************
+
+    // #cookies2 : En l'absence de token (c'est à dire de cookie "token"), on répond
+    // directement avec un statut non-autorisé
+    const token = req.cookies.token;
+    if (!token) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
     }
 
-    // Vérifier que l'en-tête a la forme "Bearer <token>"
-    const [type, token] = authorizationHeader.split(" ");
-
-    if (type !== "Bearer") {
-      throw new Error("Authorization header has not the 'Bearer' type");
-    }
-
-    // Vérifier la validité du token (son authenticité et sa date d'expériation)
-    // En cas de succès, le payload est extrait et décodé
+    // #cookies2 : On vérifie la validité du token qui provient du cookie, exactement
+    // comme plus haut
     req.auth = jwt.verify(token, process.env.APP_SECRET as string) as MyPayload;
 
     next();
@@ -109,4 +147,5 @@ const verifyToken: RequestHandler = (req, res, next) => {
   }
 };
 
-export default { login, hashPassword, verifyToken };
+// #cookies2 : Ajout du handler logout dans les exports
+export default { login, hashPassword, logout, verifyToken };

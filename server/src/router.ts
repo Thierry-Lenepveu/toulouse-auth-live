@@ -22,7 +22,7 @@ router.get("/api/users/:id", userActions.read);
 import authActions from "./modules/auth/authActions";
 
 router.post("/api/login", authActions.login);
-
+router.post("api/logout", authActions.logout);
 router.post("/api/users", authActions.hashPassword, userActions.add);
 
 // Authentication wall
