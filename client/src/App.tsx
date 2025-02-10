@@ -17,30 +17,33 @@ type Auth = {
 
 function App() {
   const [auth, setAuth] = useState(null as Auth | null);
-  const navigation = useNavigate()
+  const navigation = useNavigate();
 
   // #cookies3 : Création de la fonction handleLogout qui, en plus de mettre la valeur
   // de auth à null, envoie une requête au serveur sur le endpoint "api/logout", ce qui a
   // pour effet de supprimer le cookie, rendant la déconnexion effective.
   const handleLogout = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/logout`, {
-        method: "POST",
-        // #cookies3 : Inclusion de la paire "credentials : 'include'" pour transmettre
-        // le cookie côté serveur 
-        credentials: "include"
-      })
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/logout`,
+        {
+          method: "POST",
+          // #cookies3 : Inclusion de la paire "credentials : 'include'" pour transmettre
+          // le cookie côté serveur
+          credentials: "include",
+        },
+      );
 
       // #cookies3 : Si le serveur répond avec un statut 204 ("no content"), alors le
       // cookie a été supprimé, on peut donc mettre à null le getter "auth"
       if (response.status === 204) {
-        setAuth(null)
-        navigation("/")
-      } 
+        setAuth(null);
+        navigation("/");
+      }
     } catch (error) {
       console.error(error);
     }
-  } 
+  };
 
   return (
     <>
