@@ -16,7 +16,8 @@ type User = {
 
 type Auth = {
   user: User;
-  token: string;
+  // #cookies3 : Plus besoin de typer le token, puisqu'il est géré
+  // exclusivement dans les cookies
 };
 
 type Item = {
@@ -44,10 +45,15 @@ function Home() {
         `${import.meta.env.VITE_API_URL}/api/items`,
         {
           method: "post",
+          // #cookies3 : Inclusion de la paire "credentials : 'include'" pour transmettre
+          // le cookie côté serveur
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             /* conditional rendering ensures auth is not null */
-            Authorization: `Bearer ${(auth as Auth).token}`, // Inclusion du jeton JWT
+            // #cookies3 : Le header d'autorisation n'est plus nécessaire dès lors que l'on
+            // utilise les cookies
+            // Authorization: `Bearer ${(auth as Auth).token}`, Inclusion du jeton JWT
           },
           body: JSON.stringify({
             title:

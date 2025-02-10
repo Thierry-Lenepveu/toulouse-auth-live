@@ -43,9 +43,13 @@ const login: RequestHandler = async (req, res, next) => {
       // #cookies2 : Configuration du cookie httpOnly qu'on enverra en réponse
       // de la requête
       res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: "strict",
-      });
+  httpOnly: true,
+  sameSite: "strict",
+  secure: false, // #cookies2 : false parce qu'on est en local, et donc en http. À
+  // changer en production.
+  domain: "localhost",
+  path: "/",
+});
 
       // #cookies2 : Le token n'est plus nécessaire dans la réponse en JSON,
       // étant donné qu'il est passé par le cookie
@@ -131,6 +135,7 @@ const verifyToken: RequestHandler = (req, res, next) => {
     // #cookies2 : En l'absence de token (c'est à dire de cookie "token"), on répond
     // directement avec un statut non-autorisé
     const token = req.cookies.token;
+    
     if (!token) {
       res.status(401).json({ message: "Unauthorized" });
       return;

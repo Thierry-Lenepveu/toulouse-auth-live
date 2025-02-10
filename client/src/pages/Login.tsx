@@ -38,6 +38,9 @@ function Login() {
         {
           method: "post",
           headers: { "Content-Type": "application/json" },
+          // #cookies3 : Inclusion de la paire "credentials : 'include'" pour transmettre
+          // le cookie côté serveur
+          credentials: "include",
           body: JSON.stringify({
             email:
               /* rendering process ensures the ref is defined before the form is submitted */
